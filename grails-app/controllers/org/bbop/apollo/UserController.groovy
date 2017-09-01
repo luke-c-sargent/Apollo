@@ -461,12 +461,19 @@ class UserController {
             render status: HttpStatus.UNAUTHORIZED
             return
         }
+        Organism organism = null
+        User user = null
         UserOrganismPermission userOrganismPermission = UserOrganismPermission.findById(dataObject.id)
 
-        User user = dataObject.userId ? User.findById(dataObject.userId as Long) : User.findByUsername(dataObject.user)
+        if(userOrganismPermission){
+            user = userOrganismPermission.user
+            organism = userOrganismPermission.organism
+        } else {
+            user = dataObject.userId ? User.findById(dataObject.userId as Long) : User.findByUsername(dataObject.user)
+            log.debug "Finding organism by ${dataObject.organism}"
+            organism = preferenceService.getOrganismForTokenInDB(dataObject.organism)
+        }
 
-        log.debug "Finding organism by ${dataObject.organism}"
-        Organism organism = preferenceService.getOrganismForTokenInDB(dataObject.organism)
         if (!organism) {
             render([(FeatureStringEnum.ERROR.value): "Failed to find organism with ${dataObject.organism}"] as JSON)
             return

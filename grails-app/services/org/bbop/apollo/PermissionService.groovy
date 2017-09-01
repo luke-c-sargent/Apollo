@@ -280,12 +280,18 @@ class PermissionService {
 
     }
 
+    Boolean hasValidValue(JSONObject inputObject, FeatureStringEnum feature){
+        return inputObject.has(feature.value) && !inputObject.isNull(feature.value)
+    }
 
     Organism getOrganismFromInput(JSONObject inputObject) {
-
-        if (inputObject.has(FeatureStringEnum.ORGANISM.value)) {
+        if (hasValidValue(inputObject, FeatureStringEnum.ORGANISM)) {
             String organismString = inputObject.getString(FeatureStringEnum.ORGANISM.value)
             return preferenceService.getOrganismForTokenInDB(organismString)
+        }
+        if (hasValidValue(inputObject, FeatureStringEnum.ID)) {
+            String permissionID = inputObject.getString(FeatureStringEnum.ID.value)
+            return Permission.findById(permissionID).organism
         }
         return null
     }
