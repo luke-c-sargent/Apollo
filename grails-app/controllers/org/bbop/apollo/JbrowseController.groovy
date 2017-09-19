@@ -573,7 +573,7 @@ class JbrowseController {
             response.setHeader("ETag", eTag);
             response.setHeader("Last-Modified", dateString);
 //        }
-        
+
         response.setContentType(mimeType);
 //        // Set content size
 //        response << file.text
